@@ -5,7 +5,7 @@ package mcp
 import (
 	"net/http"
 
-	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v5"
 	"github.com/ravenmk2/jungle/internal/apperrors"
 	"github.com/ravenmk2/jungle/internal/common"
 )
@@ -31,7 +31,7 @@ func (r *Registry) List() []Tool {
 
 // Mount attaches the /mcp placeholder route.
 func Mount(eng *echo.Echo) {
-	eng.Any("/mcp", func(c echo.Context) error {
+	eng.Any("/mcp", func(c *echo.Context) error {
 		return c.JSON(http.StatusOK, common.Fail(apperrors.New(apperrors.InternalError, "mcp not implemented")))
 	})
 }

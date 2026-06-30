@@ -9,7 +9,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v5"
 	"github.com/ravenmk2/jungle/internal/common"
 	"github.com/ravenmk2/jungle/internal/service/workspace"
 )
@@ -96,5 +96,39 @@ func TestWorkspaceGetValidation(t *testing.T) {
 	json.Unmarshal(rec.Body.Bytes(), &env)
 	if env.Success || env.Error == nil || env.Error.Code != "VALIDATION_ERROR" {
 		t.Fatalf("expected VALIDATION_ERROR, got %+v", env)
+	}
+	if rec.Code != http.StatusOK {
+		t.Fatalf("business error status = %d, want 200", rec.Code)
+	}
+}
+
+func TestNotFoundEnvelope(t *testing.T) {
+	e := setupEng(t)
+	req := httptest.NewRequest("GET", "/api/no-such-route", nil)
+	rec := httptest.NewRecorder()
+	e.ServeHTTP(rec, req)
+	if rec.Code != http.StatusNotFound {
+		t.Fatalf("status = %d, want 404", rec.Code)
+	}
+	var env common.Envelope
+	json.Unmarshal(rec.Body.Bytes(), &env)
+	if env.Success || env.Error == nil || env.Error.Code != "NOT_FOUND" {
+		t.Fatalf("expected NOT_FOUND envelope, got %+v", env)
+	}
+}
+
+func TestPanicEnvelope(t *testing.T) {
+	e := setupEng(t)
+	e.GET("/api/boom", func(c *echo.Context) error { panic("boom") })
+	req := httptest.NewRequest("GET", "/api/boom", nil)
+	rec := httptest.NewRecorder()
+	e.ServeHTTP(rec, req)
+	if rec.Code != http.StatusInternalServerError {
+		t.Fatalf("status = %d, want 500", rec.Code)
+	}
+	var env common.Envelope
+	json.Unmarshal(rec.Body.Bytes(), &env)
+	if env.Success || env.Error == nil || env.Error.Code != "INTERNAL_ERROR" {
+		t.Fatalf("expected INTERNAL_ERROR envelope, got %+v", env)
 	}
 }

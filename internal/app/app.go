@@ -5,7 +5,7 @@ package app
 import (
 	"path/filepath"
 
-	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v5"
 	"github.com/ravenmk2/jungle/internal/config"
 	"github.com/ravenmk2/jungle/internal/handlers"
 	"github.com/ravenmk2/jungle/internal/mcp"

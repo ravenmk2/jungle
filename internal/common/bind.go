@@ -2,7 +2,7 @@ package common
 
 import (
 	"github.com/go-playground/validator/v10"
-	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v5"
 	"github.com/ravenmk2/jungle/internal/apperrors"
 )
 
@@ -10,7 +10,7 @@ var validate = validator.New()
 
 // Bind decodes the JSON request body into req and validates it.
 // Returns a typed ValidationError (with field-level details) on failure.
-func Bind(c echo.Context, req interface{}) error {
+func Bind(c *echo.Context, req interface{}) error {
 	if err := c.Bind(req); err != nil {
 		return apperrors.New(apperrors.ValidationError, "invalid request body")
 	}

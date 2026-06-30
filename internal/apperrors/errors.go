@@ -7,6 +7,7 @@ type Code string
 const (
 	ValidationError   Code = "VALIDATION_ERROR"
 	NotFound          Code = "NOT_FOUND"
+	MethodNotAllowed  Code = "METHOD_NOT_ALLOWED"
 	InternalError     Code = "INTERNAL_ERROR"
 	BuildFailed       Code = "BUILD_FAILED"
 	RunFailed         Code = "RUN_FAILED"
