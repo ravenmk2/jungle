@@ -2,3 +2,6 @@
 config/config.toml
 config/workspaces/
 data/
+
+# build artifact
+jungle.exe
