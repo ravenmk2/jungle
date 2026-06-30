@@ -1,2 +1,1 @@
-﻿package searcher
-
+package searcher

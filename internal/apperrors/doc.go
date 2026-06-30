@@ -1,2 +1,1 @@
-﻿package apperrors
-
+package apperrors
