@@ -1,0 +1,8 @@
+[server]
+addr = "127.0.0.1:7788"
+
+[data]
+dir = "./data"
+
+[log]
+level = "info"
