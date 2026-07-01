@@ -18,8 +18,10 @@ func setupEng(t *testing.T) *echo.Echo {
 	t.Helper()
 	configDir := t.TempDir()
 	wsDir := filepath.Join(configDir, "workspaces")
-	os.MkdirAll(wsDir, 0o755)
-	os.WriteFile(filepath.Join(wsDir, "demo.toml"), []byte(`[java]
+	if err := os.MkdirAll(wsDir, 0o755); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(filepath.Join(wsDir, "demo.toml"), []byte(`[java]
 version = 8
 home = "/jdk"
 [profiles]
@@ -37,7 +39,9 @@ module = "app"
 work-dir = "/wd"
 port = 8080
 database = "db1"
-`), 0o644)
+`), 0o644); err != nil {
+		t.Fatal(err)
+	}
 	e := echo.New()
 	New(e, workspace.New(configDir, t.TempDir()))
 	return e
@@ -52,7 +56,9 @@ func TestHealth(t *testing.T) {
 		t.Fatalf("status = %d", rec.Code)
 	}
 	var env common.Envelope
-	json.Unmarshal(rec.Body.Bytes(), &env)
+	if err := json.Unmarshal(rec.Body.Bytes(), &env); err != nil {
+		t.Fatalf("unmarshal: %v", err)
+	}
 	if !env.Success {
 		t.Fatalf("envelope = %+v", env)
 	}
@@ -98,7 +104,9 @@ func TestWorkspaceGetAndSwitch(t *testing.T) {
 		t.Fatalf("switch status = %d", rec.Code)
 	}
 	var env common.Envelope
-	json.Unmarshal(rec.Body.Bytes(), &env)
+	if err := json.Unmarshal(rec.Body.Bytes(), &env); err != nil {
+		t.Fatalf("unmarshal: %v", err)
+	}
 	if !env.Success {
 		t.Fatalf("switch envelope = %+v", env)
 	}
@@ -112,7 +120,9 @@ func TestWorkspaceGetValidation(t *testing.T) {
 	rec := httptest.NewRecorder()
 	e.ServeHTTP(rec, req)
 	var env common.Envelope
-	json.Unmarshal(rec.Body.Bytes(), &env)
+	if err := json.Unmarshal(rec.Body.Bytes(), &env); err != nil {
+		t.Fatalf("unmarshal: %v", err)
+	}
 	if env.Success || env.Error == nil || env.Error.Code != "VALIDATION_ERROR" {
 		t.Fatalf("expected VALIDATION_ERROR, got %+v", env)
 	}
@@ -130,7 +140,9 @@ func TestNotFoundEnvelope(t *testing.T) {
 		t.Fatalf("status = %d, want 404", rec.Code)
 	}
 	var env common.Envelope
-	json.Unmarshal(rec.Body.Bytes(), &env)
+	if err := json.Unmarshal(rec.Body.Bytes(), &env); err != nil {
+		t.Fatalf("unmarshal: %v", err)
+	}
 	if env.Success || env.Error == nil || env.Error.Code != "NOT_FOUND" {
 		t.Fatalf("expected NOT_FOUND envelope, got %+v", env)
 	}
@@ -146,7 +158,9 @@ func TestPanicEnvelope(t *testing.T) {
 		t.Fatalf("status = %d, want 500", rec.Code)
 	}
 	var env common.Envelope
-	json.Unmarshal(rec.Body.Bytes(), &env)
+	if err := json.Unmarshal(rec.Body.Bytes(), &env); err != nil {
+		t.Fatalf("unmarshal: %v", err)
+	}
 	if env.Success || env.Error == nil || env.Error.Code != "INTERNAL_ERROR" {
 		t.Fatalf("expected INTERNAL_ERROR envelope, got %+v", env)
 	}

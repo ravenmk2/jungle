@@ -21,16 +21,16 @@ func ErrorHandler(c *echo.Context, err error) {
 	// Business error -> HTTP 200 + envelope.
 	var ne *apperrors.Error
 	if errors.As(err, &ne) {
-		c.JSON(http.StatusOK, common.Fail(ne))
+		_ = c.JSON(http.StatusOK, common.Fail(ne))
 		return
 	}
 	// Echo transport/system error (implements echo.HTTPStatusCoder) -> its status + envelope.
 	if code := echo.StatusCode(err); code != 0 {
-		c.JSON(code, common.Fail(mapStatusToAppError(code)))
+		_ = c.JSON(code, common.Fail(mapStatusToAppError(code)))
 		return
 	}
 	// Unknown error (e.g. recovered panic not wrapped as HTTPStatusCoder) -> 500 + envelope.
-	c.JSON(http.StatusInternalServerError, common.Fail(apperrors.New(apperrors.InternalError, "internal error")))
+	_ = c.JSON(http.StatusInternalServerError, common.Fail(apperrors.New(apperrors.InternalError, "internal error")))
 }
 
 // mapStatusToAppError converts an HTTP status code into a typed apperror for the

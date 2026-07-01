@@ -8,13 +8,15 @@ import (
 
 func TestLoadServer(t *testing.T) {
 	p := filepath.Join(t.TempDir(), "config.toml")
-	os.WriteFile(p, []byte(`[server]
+	if err := os.WriteFile(p, []byte(`[server]
 addr = "127.0.0.1:7788"
 [data]
 dir = "./data"
 [log]
 level = "info"
-`), 0o644)
+`), 0o644); err != nil {
+		t.Fatal(err)
+	}
 	cfg, err := LoadServer(p)
 	if err != nil {
 		t.Fatal(err)
@@ -32,7 +34,7 @@ level = "info"
 
 func TestLoadWorkspace(t *testing.T) {
 	p := filepath.Join(t.TempDir(), "demo.toml")
-	os.WriteFile(p, []byte(`[java]
+	if err := os.WriteFile(p, []byte(`[java]
 version = 8
 home = "/jdk"
 [maven]
@@ -57,7 +59,9 @@ port = 8080
 database = "db1"
 [profiles]
 items = ["dev", "staging"]
-`), 0o644)
+`), 0o644); err != nil {
+		t.Fatal(err)
+	}
 	cfg, err := LoadWorkspace(p)
 	if err != nil {
 		t.Fatal(err)
