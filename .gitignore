@@ -1,3 +1,8 @@
+.idea/
+.vscode/
+.opencode/
+.claude/
+
 # 运行时配置与数据
 config/config.toml
 config/workspaces/
