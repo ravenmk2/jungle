@@ -15,7 +15,7 @@ func mountWorkspace(eng *echo.Echo, wsSvc workspace.Service) {
 		if err != nil {
 			return err
 		}
-		return c.JSON(http.StatusOK, common.OK(map[string][]string{"items": out}))
+		return c.JSON(http.StatusOK, common.OK(out))
 	})
 	g.POST("/get", func(c *echo.Context) error {
 		var req struct {

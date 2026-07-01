@@ -53,10 +53,16 @@ func TestWorkspaceList(t *testing.T) {
 	if rec.Code != http.StatusOK {
 		t.Fatalf("status = %d", rec.Code)
 	}
-	var env common.Envelope
-	json.Unmarshal(rec.Body.Bytes(), &env)
-	if !env.Success {
-		t.Fatalf("envelope = %+v", env)
+	var got struct {
+		Success bool            `json:"success"`
+		Data    []string        `json:"data"`
+		Error   json.RawMessage `json:"error"`
+	}
+	if err := json.Unmarshal(rec.Body.Bytes(), &got); err != nil {
+		t.Fatalf("unmarshal: %v body=%s", err, rec.Body.String())
+	}
+	if !got.Success || len(got.Data) != 1 || got.Data[0] != "demo" {
+		t.Fatalf("list = %+v body=%s", got, rec.Body.String())
 	}
 }
 

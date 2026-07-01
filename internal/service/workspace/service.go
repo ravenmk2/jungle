@@ -45,7 +45,7 @@ func (s *service) List(ctx context.Context) ([]string, error) {
 	if err != nil {
 		return nil, apperrors.New(apperrors.NotFound, "no workspaces")
 	}
-	var out []string
+	out := make([]string, 0, len(entries))
 	for _, e := range entries {
 		if name := strings.TrimSuffix(e.Name(), ".toml"); name != e.Name() {
 			out = append(out, name)

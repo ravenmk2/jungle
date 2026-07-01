@@ -50,3 +50,19 @@ func TestGetAndSwitch(t *testing.T) {
 		t.Fatalf("after switch profile = %q", v.CurrentProfile)
 	}
 }
+
+func TestListEmpty(t *testing.T) {
+	configDir := t.TempDir()
+	os.MkdirAll(filepath.Join(configDir, "workspaces"), 0o755)
+	s := New(configDir, t.TempDir())
+	got, err := s.List(nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if got == nil {
+		t.Fatal("List = nil, want non-nil empty slice")
+	}
+	if len(got) != 0 {
+		t.Fatalf("List = %+v, want empty", got)
+	}
+}
