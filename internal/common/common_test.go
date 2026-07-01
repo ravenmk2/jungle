@@ -63,3 +63,35 @@ func TestBindOK(t *testing.T) {
 		t.Fatalf("workspace = %q", got.Workspace)
 	}
 }
+
+func TestBindValidationErrorTarget(t *testing.T) {
+	e := echo.New()
+	req := httptest.NewRequest("POST", "/", strings.NewReader(`{}`))
+	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
+	rec := httptest.NewRecorder()
+	c := e.NewContext(req, rec)
+	var got struct {
+		Workspace string `json:"workspace" validate:"required"`
+	}
+	err := Bind(c, &got)
+	if err == nil {
+		t.Fatal("expected validation error")
+	}
+	ae, ok := err.(*apperrors.Error)
+	if !ok {
+		t.Fatalf("err type %T, want *apperrors.Error", err)
+	}
+	if ae.Code != apperrors.ValidationError {
+		t.Fatalf("code = %s", ae.Code)
+	}
+	if len(ae.Details) != 1 {
+		t.Fatalf("details = %+v", ae.Details)
+	}
+	d := ae.Details[0]
+	if d.Code != "required" {
+		t.Fatalf("detail code = %s", d.Code)
+	}
+	if d.Target != "workspace" {
+		t.Fatalf("target = %q, want workspace", d.Target)
+	}
+}

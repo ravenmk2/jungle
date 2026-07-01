@@ -1,12 +1,27 @@
 package common
 
 import (
+	"reflect"
+	"strings"
+
 	"github.com/go-playground/validator/v10"
 	"github.com/labstack/echo/v5"
 	"github.com/ravenmk2/jungle/internal/apperrors"
 )
 
-var validate = validator.New()
+var validate = newValidator()
+
+func newValidator() *validator.Validate {
+	v := validator.New()
+	v.RegisterTagNameFunc(func(fld reflect.StructField) string {
+		name := strings.SplitN(fld.Tag.Get("json"), ",", 2)[0]
+		if name == "" || name == "-" {
+			return fld.Name
+		}
+		return name
+	})
+	return v
+}
 
 // Bind decodes the JSON request body into req and validates it.
 // Returns a typed ValidationError (with field-level details) on failure.
