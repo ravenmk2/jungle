@@ -28,52 +28,52 @@ type LogSection struct {
 
 // WorkspaceConfig is a per-workspace config (config/workspaces/<name>.toml).
 type WorkspaceConfig struct {
-	Java      JavaSection         `toml:"java"`
-	Maven     MavenSection        `toml:"maven"`
-	Docs      DocsSection         `toml:"docs"`
-	Projects  map[string]Project  `toml:"projects"`
-	Databases map[string]Database `toml:"databases"`
-	Services  map[string]Service  `toml:"services"`
-	Profiles  ProfilesSection     `toml:"profiles"`
+	Java      JavaSection         `toml:"java" json:"java"`
+	Maven     MavenSection        `toml:"maven" json:"maven"`
+	Docs      DocsSection         `toml:"docs" json:"docs"`
+	Projects  map[string]Project  `toml:"projects" json:"projects"`
+	Databases map[string]Database `toml:"databases" json:"databases"`
+	Services  map[string]Service  `toml:"services" json:"services"`
+	Profiles  ProfilesSection     `toml:"profiles" json:"profiles"`
 }
 
 type JavaSection struct {
-	Version int    `toml:"version"`
-	Home    string `toml:"home"`
+	Version int    `toml:"version" json:"version"`
+	Home    string `toml:"home" json:"home"`
 }
 
 type MavenSection struct {
-	Home string `toml:"home"`
-	Repo string `toml:"repo"`
+	Home string `toml:"home" json:"home"`
+	Repo string `toml:"repo" json:"repo"`
 }
 
 type DocsSection struct {
-	Dirs []string `toml:"dirs"`
+	Dirs []string `toml:"dirs" json:"dirs"`
 }
 
 type Project struct {
-	Repo string `toml:"repo"`
+	Repo string `toml:"repo" json:"repo"`
 }
 
 type Database struct {
-	Host     string `toml:"host"`
-	Port     int    `toml:"port"`
-	DB       string `toml:"db"`
-	User     string `toml:"user"`
-	Password string `toml:"password"`
-	InitSQL  string `toml:"init-sql"`
+	Host     string `toml:"host" json:"host"`
+	Port     int    `toml:"port" json:"port"`
+	DB       string `toml:"db" json:"db"`
+	User     string `toml:"user" json:"user"`
+	Password string `toml:"password" json:"-"`
+	InitSQL  string `toml:"init-sql" json:"initSql,omitempty"`
 }
 
 type Service struct {
-	Project  string `toml:"project"`
-	Module   string `toml:"module"`
-	WorkDir  string `toml:"work-dir"`
-	Port     int    `toml:"port"`
-	Database string `toml:"database"`
+	Project  string `toml:"project" json:"project"`
+	Module   string `toml:"module" json:"module"`
+	WorkDir  string `toml:"work-dir" json:"workDir"`
+	Port     int    `toml:"port" json:"port,omitempty"`
+	Database string `toml:"database" json:"database,omitempty"`
 }
 
 type ProfilesSection struct {
-	Items []string `toml:"items"`
+	Items []string `toml:"items" json:"items"`
 }
 
 // LoadServer reads and parses config.toml.

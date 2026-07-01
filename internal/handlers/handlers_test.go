@@ -24,6 +24,19 @@ version = 8
 home = "/jdk"
 [profiles]
 items = ["dev", "staging"]
+[databases."db1"]
+host = "127.0.0.1"
+port = 3306
+db = "demo"
+user = "root"
+password = "pw"
+init-sql = "/init.sql"
+[services."svc1"]
+project = "demo"
+module = "app"
+work-dir = "/wd"
+port = 8080
+database = "db1"
 `), 0o644)
 	e := echo.New()
 	New(e, workspace.New(configDir, t.TempDir()))
@@ -136,5 +149,30 @@ func TestPanicEnvelope(t *testing.T) {
 	json.Unmarshal(rec.Body.Bytes(), &env)
 	if env.Success || env.Error == nil || env.Error.Code != "INTERNAL_ERROR" {
 		t.Fatalf("expected INTERNAL_ERROR envelope, got %+v", env)
+	}
+}
+
+func TestWorkspaceGetShape(t *testing.T) {
+	e := setupEng(t)
+	req := httptest.NewRequest("POST", "/api/workspace/get", strings.NewReader(`{"workspace":"demo"}`))
+	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
+	rec := httptest.NewRecorder()
+	e.ServeHTTP(rec, req)
+	if rec.Code != http.StatusOK {
+		t.Fatalf("status = %d", rec.Code)
+	}
+	body := rec.Body.String()
+	if strings.Contains(body, "password") || strings.Contains(body, "Password") {
+		t.Fatalf("password leaked: %s", body)
+	}
+	for _, want := range []string{`"currentProfile"`, `"initSql"`, `"workDir"`, `"databases"`, `"services"`} {
+		if !strings.Contains(body, want) {
+			t.Fatalf("missing %q in %s", want, body)
+		}
+	}
+	for _, bad := range []string{`"InitSQL"`, `"WorkDir"`, `"CurrentProfile"`, `"Password"`, `"Databases"`} {
+		if strings.Contains(body, bad) {
+			t.Fatalf("PascalCase leak %q in %s", bad, body)
+		}
 	}
 }
