@@ -4,6 +4,8 @@ date: 2026-06-30
 
 # Jungle 基础结构脚手架 Implementation Plan
 
+> **历史注记**：本计划按 Echo v4 编写并已执行完毕；其后由 commit `37c1d7e` 升级至 Echo v5 并完善统一信封错误处理（集中 `HTTPErrorHandler` + `middleware.Recover`，handler 改 `return err`）。下文 Echo v4 代码示例与内联 `MapError` 写法已过时，当前实现以代码为准，错误处理契约见 `docs/specs/0001-jungle-foundation.md` §7。
+
 > **For agentic workers:** REQUIRED SUB-SKILL: Use wf-executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** 搭建 Jungle 项目的可构建、可运行骨架：完整目录结构 + 核心共享层（config/storage/common/apperrors）+ workspace 最小可用端点 + 其余模块 stub + 组装根与入口，满足 `go build ./...` 通过、`/api/health` 与 `/api/workspace/*` 可调用。
